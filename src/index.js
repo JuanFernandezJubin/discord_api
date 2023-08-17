@@ -27,6 +27,11 @@ app.post('/interactions', async (req, res) => {
   /**
    * Handle verification requests
    */
+  console.log(InteractionType);
+  console.log({
+    type,
+    id,
+  })
   if (type === InteractionType.PING) {
     return res.send({ type: InteractionResponseType.PONG });
   }
@@ -40,6 +45,8 @@ app.post('/interactions', async (req, res) => {
 
     // "test" command
     if (name === 'test') {
+      console.log('=======================');
+      console.log(InteractionResponseType);
       // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
