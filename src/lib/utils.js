@@ -1,4 +1,6 @@
 const { verifyKey } = require('discord-interactions');
+const axios = require('axios');
+
 require('dotenv').config();
 
 /**
@@ -17,34 +19,34 @@ const verifyDiscordRequest = (clientKey) => (req, res, buf, encoding) => {
   }
 
 };
+
 const discordRequest = async (endpoint, options) => {
   const url = 'https://discord.com/api/v10/' + endpoint;
 
-  if (options.body) options.body = JSON.stringify(options.body);
+  const headers = {
+    Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+    'Content-Type': 'application/json; charset=UTF-8',
+    'User-Agent': 'DiscordBot (SASHA, 1.0.0)',
+  };
 
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-      'Content-Type': 'application/json; charset=UTF-8',
-      'User-Agent': 'DiscordBot (https://github.com/discord/discord-example-app, 1.0.0)',
-    },
-    ...options,
-  });
+  const axiosConfig = {
+    method: 'PUT',
+    url,
+    headers,
+    data: options.body,
+  };
 
-  if (!res.ok) {
-    const data = await res.json();
-    console.log(res.status);
-    throw new Error(JSON.stringify(data));
-  }
-
-  return res;
+  const response = await axios(axiosConfig);
+  return response.data;
 };
+
 
 const installGlobalCommands = async (appId, commands) => {
   const endpoint = `applications/${appId}/commands`;
 
   try {
     await discordRequest(endpoint, { method: 'PUT', body: commands });
+    console.log('Successfully registered application commands.');
   } catch (err) {
     console.error(err);
   }

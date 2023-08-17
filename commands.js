@@ -1,4 +1,4 @@
-const { installGlobalCommands } = require('./utils.js');
+const { installGlobalCommands } = require('./src/lib/utils');
 require('dotenv').config();
 
 // Simple test command
