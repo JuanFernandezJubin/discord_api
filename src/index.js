@@ -1,10 +1,16 @@
+require('dotenv').config();
+
+// Main Libraries
 const express = require('express');
 const {
   InteractionType,
   InteractionResponseType,
 } = require('discord-interactions');
-const { verifyDiscordRequest, getRandomEmoji } = require('./lib/utils');
-require('dotenv').config();
+
+// Controllers
+const { applicationHandler } = require('./interactions');
+// Extras
+const { verifyDiscordRequest } = require('./lib/utils');
 
 // Create an express app
 const app = express();
@@ -31,7 +37,8 @@ app.post('/interactions', async (req, res) => {
   console.log({
     type,
     id,
-  })
+  });
+
   if (type === InteractionType.PING) {
     return res.send({ type: InteractionResponseType.PONG });
   }
@@ -44,15 +51,15 @@ app.post('/interactions', async (req, res) => {
     const { name } = data;
 
     // "test" command
-    if (name === 'test') {
-      console.log('=======================');
-      console.log(InteractionResponseType);
-      // Send a message into the channel where command was triggered from
-      return res.send({
+    try {
+      const response = await applicationHandler(req, res, name);
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          // Fetches a random emoji to send from a helper function
-          content: 'hello world ' + getRandomEmoji(),
+          content: 'An error occurred while executing the command',
         },
       });
     }

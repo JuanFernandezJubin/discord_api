@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "register": "node ./src/commands/index.js",
+    "register": "node ./src/commands/__init__.js",
     "dev": "nodemon ./src/index.js"
   },
   "author": "Juan Ig. Jubín & Gaston García Bauer",
